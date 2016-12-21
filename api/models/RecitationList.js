@@ -14,6 +14,9 @@ module.exports = {
 		word: {
 			collection: 'recitationword',
 			via: 'list'
+		},
+		cover: {
+			type: 'string'
 		}
 	}
 

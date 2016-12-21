@@ -12,7 +12,7 @@ module.exports = {
 
 		if(id == null)
 		{
-			RecitationList.find().populate('word').exec(function (err, word) {
+			RecitationList.find().exec(function (err, word) {
 				if (err) {
 					return res.err(err);
 				}
