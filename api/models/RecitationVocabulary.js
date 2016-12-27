@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	tableName: 'recitation_list',
+	tableName: 'recitation_vocabulary',
 	attributes: {
 		name: {
 			type: 'string'
@@ -16,6 +16,9 @@ module.exports = {
 			via: 'list'
 		},
 		cover: {
+			type: 'string'
+		},
+		description: {
 			type: 'string'
 		}
 	}

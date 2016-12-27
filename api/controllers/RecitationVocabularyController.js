@@ -6,24 +6,24 @@
  */
 
 module.exports = {
-	find: function(req, res){
+	find(req, res){
 		var id = req.param('id');
 		var result;
 
 		if(id == null)
 		{
-			RecitationList.find().exec(function (err, word) {
+			RecitationVocabulary.find().exec(function (err, word) {
 				if (err) {
-					return res.err(err);
+					return res.json({err: err});
 				}
 				return res.json(word);
 			});
 		}
 		else
 		{
-			RecitationList.find({ id: req.param('id') }).populate('word').exec(function (err, word) {
+			RecitationVocabulary.find({ id: id }).populate('word').exec(function (err, word) {
 				if (err) {
-					return res.err(err);
+					return res.json({err: err});
 				}
 				return res.json(word);
 			});

@@ -12,7 +12,7 @@ module.exports = {
 			columnName: 'listID',
 			type: 'integer',
 			required: true,
-			model: 'recitationlist'
+			model: 'recitationvocabulary'
 		},
 		name: {
 			type: 'string'
