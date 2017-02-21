@@ -7,19 +7,25 @@
 var bcrypt = require('bcrypt');
 
 module.exports = {
+  schema: true,
 
   attributes: {
   	email: {
-  		type: 'string'
+  		type: 'string',
+      email: true,
+      required: true,
+      unique: true
   	},
   	password: {
   		type: 'string'
   	},
   	nickname: {
-  		type: 'string'
+  		type: 'string',
+      defaultsTo: 'John Doe'
   	},
   	avatar: {
-  		type: 'string'
+  		type: 'string',
+      defaultsTo: ''
   	},
   	studyNotification: {
   		type: 'string'
@@ -31,18 +37,13 @@ module.exports = {
       return obj;
     }
   },
-  beforeCreate: function(user, cb) {
-    bcrypt.genSalt(10, function(err, salt) {
-      bcrypt.hash(user.password, salt, function(err, hash) {
-          if (err) {
-              console.log(err);
-              cb(err);
-          } else {
-              user.password = hash;
-              cb();
-          }
-      });
-    });
+  beforeUpdate: function (values, next) {
+    CipherService.hashPassword(values);
+    next();
+  },
+  beforeCreate: function (values, next) {
+    CipherService.hashPassword(values);
+    next();
   }
 };
 
