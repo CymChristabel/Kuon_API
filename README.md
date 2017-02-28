@@ -1,3 +1,1 @@
-# testAPI
-
-a [Sails](http://sailsjs.org) application
+# API for NCE
