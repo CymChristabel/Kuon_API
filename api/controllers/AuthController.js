@@ -25,10 +25,10 @@ module.exports = {
       }
       else
       {
+        //remove id params in case database corrupt
         User.create(_.omit(req.allParams(), 'id'))
         .then(function (user) {
             return {
-              // TODO: replace with new type of cipher service
               token: CipherService.createToken(user),
               user: user
             };
@@ -51,5 +51,9 @@ module.exports = {
     })
     .then(res.ok)
     .catch(res.negotiate);
+  },
+
+  testAuth(req, res){
+    return res.json({ code: 'Accepted'});
   }
 };

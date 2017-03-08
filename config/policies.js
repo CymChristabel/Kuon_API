@@ -26,6 +26,10 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
   '*': true,
+  'AuthController': {
+    '*': true,
+    'testAuth': 'isAuthenticated'
+  }
   // '*': 'isAuthenticated',
   // 'AuthController': {
   //   '*': true

@@ -8,7 +8,7 @@
 module.exports = {
 	tableName: 'recitation_vocabulary',
 	attributes: {
-		name: {
+		title: {
 			type: 'string'
 		},
 		word: {

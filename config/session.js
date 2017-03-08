@@ -59,7 +59,6 @@ module.exports.session = {
   port: 6379,
   ttl: 24 * 60 * 60 * 1000,
   db: 0,
-  pass: 'nimazhale',
   prefix: 'sess:',
 
 
