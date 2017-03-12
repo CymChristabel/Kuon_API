@@ -20,6 +20,12 @@ module.exports = {
 		explainnation: {
 			columnName: 'explainnations',
 			type: 'string'
+		},
+		example: {
+			type: 'string'
+		},
+		audio: {
+			type: 'string'
 		}
 	}
 };

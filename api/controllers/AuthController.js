@@ -21,7 +21,7 @@ module.exports = {
     User.findOne({ email: req.param('email') }).exec(function(err, id){
       if(id != null)
       {
-        return res.json({error: 'already exist', token: -1});      //-1 stands for account already exist
+        return res.json({error: 'email already used', token: -1});      //-1 stands for account already exist
       }
       else
       {
