@@ -26,14 +26,13 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
   '*': true,
-  'AuthController': {
-    '*': true,
-    'testAuth': 'isAuthenticated'
-  }
-  // '*': 'isAuthenticated',
   // 'AuthController': {
-  //   '*': true
-  // }
+  //   '*': true,
+  //   'testAuth': 'isAuthenticated'
+  // },
+  
+  // 'NCE_statisticsController': 'isAuthenticated',
+  // 'StudyTimeStatisticsController': 'isAuthenticated'
 
   /***************************************************************************
   *                                                                          *

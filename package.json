@@ -21,13 +21,15 @@
     "grunt-sync": "0.5.2",
     "include-all": "^1.0.0",
     "jsonwebtoken": "^7.2.1",
+    "lodash": "^4.17.4",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
     "passport-local": "^1.0.0",
     "rc": "1.0.1",
     "sails": "~0.12.11",
     "sails-disk": "~0.10.9",
-    "sails-service-mailer": "^3.2.1"
+    "sails-service-mailer": "^3.2.1",
+    "waterline": "^0.11.11"
   },
   "scripts": {
     "debug": "node debug app.js",
