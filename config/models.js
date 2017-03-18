@@ -27,6 +27,20 @@ module.exports.models = {
   * See http://sailsjs.org/#!/documentation/concepts/ORM/model-settings.html  *
   *                                                                          *
   ***************************************************************************/
-  migrate: 'safe'
+  migrate: 'safe',
 
+  attributes: {
+    createdAt: {
+        type: 'datetime',
+        columnName: 'createdAt'
+    },
+    updatedAt: {
+        type: 'datetime',
+        columnName: 'updatedAt'
+    },
+    deletedAt: {
+        type: 'datetime',
+        columnName: 'deletedAt'
+    }
+  },
 };
