@@ -6,24 +6,32 @@ module.exports = {
 	find(req, res){
 		if(req.param('date'))
 		{
-			StudyTimeStatistics.find({ user: req.param('user'), date: req.param('date'), sort: 'date ASC' }).exec((err, result) => {
+			StudyTimeStatistics.find({ user: req.param('user'), date: req.param('date'), deletedAt: null } , { sort: 'date ASC' }).exec((err, result) => {
 				if(err)
 				{
 					console.log(err);
 					return res.serverError(err);
 				}
-				return res.json(_.omit(result, ['createdAt', 'updatedAt', 'deletedAt']));
+				for(let i = 0; i < result.length; i++)
+				{
+					result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
+				}
+				return res.json(result);
 			});
 		}
 		else
 		{
-			StudyTimeStatistics.find({ user: req.param('user'), sort: 'date ASC' }).exec((err, result) => {
+			StudyTimeStatistics.find({ user: req.param('user'), deletedAt: null }, { sort: 'date ASC' }).exec((err, result) => {
 				if(err)
 				{
 					console.log(err);
 					return res.serverError(err);
 				}
-				return res.json(_.omit(result, ['createdAt', 'updatedAt', 'deletedAt']));
+				for(let i = 0; i < result.length; i++)
+				{
+					result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
+				}
+				return res.json(result);
 			});
 		}
 	},
@@ -31,7 +39,7 @@ module.exports = {
 	createOrUpdate(req, res){
 		let data = req.param('data');
 		console.log(data);
-		StudyTimeStatistics.find({ user: data.user, date: data.date }).exec((err, result) =>{
+		StudyTimeStatistics.find({ user: data.user, date: data.date, deletedAt: null }).exec((err, result) =>{
 			if(err){
 				console.log(err);
 				return res.serverError(err);
@@ -53,7 +61,7 @@ module.exports = {
 					data.nceTime = data.nceTime + result[0].nceTime;
 					data.recitationTime = data.recitationTime + result[0].recitationTime;
 				}
-				StudyTimeStatistics.update({ user: data.user, date: data.date }, { nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
+				StudyTimeStatistics.update({ user: data.user, date: data.date, deletedAt: null }, { nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
