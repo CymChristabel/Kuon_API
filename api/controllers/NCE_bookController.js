@@ -13,7 +13,7 @@ module.exports = {
 		{
 			NCE_book.find().populate('lession').exec(function (err, result){
 				if(err){
-					return res.json(err);
+					return res.serverError(err);
 				}
 				return res.json(result);
 			});
@@ -22,7 +22,7 @@ module.exports = {
 		{
 			NCE_book.find({id: req.param('id')}).populate('lession').exec(function (err, result){
 				if(err){
-					return res.json(err);
+					return res.serverError(err);
 				}
 				return res.json(result);
 			});

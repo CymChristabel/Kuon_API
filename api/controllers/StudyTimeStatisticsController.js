@@ -36,9 +36,8 @@ module.exports = {
 		}
 	},
 
-	createOrUpdate(req, res){
+	createOrUpdate: (req, res) => {
 		let data = req.param('data');
-		console.log(data);
 		StudyTimeStatistics.find({ user: data.user, date: data.date, deletedAt: null }).exec((err, result) =>{
 			if(err){
 				console.log(err);
@@ -71,7 +70,7 @@ module.exports = {
 			}
 		});
 	},
-
+	//untest
 	synchronize: (req, res) => {
 		let temp = req.param('data');
 		let userID = req.param('user');
