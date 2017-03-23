@@ -46,12 +46,20 @@ module.exports = {
 	},
 
 	find(req, res){
-		NCE_favorite.find({ user: req.param('userID'), deletedAt: null }).exec((err, result) => {
+		NCE_favorite.find({ user: req.param('userID'), deletedAt: null })
+		.populate('lession')
+		.exec((err, result) => {
 			if(err)
 			{
 				console.log(err);
 				return res.serverError(err);
 			}
+			for(let i = 0; i < result.length; i++)
+			{
+				result[i].lession = _.pick(result[i].lession, 'title');
+				result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
+			}
+			
 			return res.json(result);
 		})
 	},
@@ -70,6 +78,11 @@ module.exports = {
 					{
 						console.log(finalErr);
 						return res.serverError(finalErr);
+					}
+					if(Array.isArray(finalResult))
+					{
+						console.log(finalResult);
+						return res.json(finalResult[0].id);
 					}
 					return res.json(finalResult.id);
 				});
