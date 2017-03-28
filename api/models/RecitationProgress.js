@@ -1,12 +1,13 @@
 /**
- * RecitationStatistics.js
+ * RecitationProgress.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
 module.exports = {
-	tableName: 'recitation_statistics',
+	tableName: 'recitation_progress',
+
 	attributes: {
 		user: {
 			columnName: 'userID',
@@ -20,18 +21,9 @@ module.exports = {
     		required: true,
     		model: 'recitationvocabulary'
     	},
-		date: {
-			type: 'string',
-			required: true
-		},
-		correct: {
-			type: 'integer',
-			defaultsTo: 0
-		},
-		incorrect: {
-			type: 'integer',
-			defaultsTo: 0
-		},
+    	progress: {
+    		type: 'integer'
+    	}
 	}
 };
 

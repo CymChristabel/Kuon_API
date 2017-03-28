@@ -6,7 +6,7 @@ module.exports = {
 	find(req, res){
 		if(req.param('date'))
 		{
-			StudyTimeStatistics.find({ user: req.param('user'), date: req.param('date'), deletedAt: null } , { sort: 'date ASC' }).exec((err, result) => {
+			StudyTimeStatistics.find({ user: req.param('userID'), date: req.param('date'), deletedAt: null } , { sort: 'date ASC' }).exec((err, result) => {
 				if(err)
 				{
 					console.log(err);
@@ -21,7 +21,7 @@ module.exports = {
 		}
 		else
 		{
-			StudyTimeStatistics.find({ user: req.param('user'), deletedAt: null }, { sort: 'date ASC' }).exec((err, result) => {
+			StudyTimeStatistics.find({ user: req.param('userID'), deletedAt: null }, { sort: 'date ASC' }).exec((err, result) => {
 				if(err)
 				{
 					console.log(err);
@@ -38,14 +38,14 @@ module.exports = {
 
 	createOrUpdate: (req, res) => {
 		let data = req.param('data');
-		StudyTimeStatistics.find({ user: data.user, date: data.date, deletedAt: null }).exec((err, result) =>{
+		StudyTimeStatistics.find({ user: data.userID, date: data.date, deletedAt: null }).exec((err, result) =>{
 			if(err){
 				console.log(err);
 				return res.serverError(err);
 			}
 			if(result.length == 0)
 			{
-				StudyTimeStatistics.create(data).exec((finalErr, finalResult) => {
+				StudyTimeStatistics.create({ user: data.userID, date: data.date, nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
@@ -60,7 +60,7 @@ module.exports = {
 					data.nceTime = data.nceTime + result[0].nceTime;
 					data.recitationTime = data.recitationTime + result[0].recitationTime;
 				}
-				StudyTimeStatistics.update({ user: data.user, date: data.date, deletedAt: null }, { nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
+				StudyTimeStatistics.update({ user: data.userID, date: data.date, deletedAt: null }, { nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
@@ -73,7 +73,7 @@ module.exports = {
 	//untest
 	synchronize: (req, res) => {
 		let temp = req.param('data');
-		let userID = req.param('user');
+		let userID = req.param('userID');
 		let data = [];
 
 		for(let key in temp)
