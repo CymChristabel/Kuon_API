@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var moment = require('moment');
+var async = require('async');
 
 module.exports = {
 
@@ -38,63 +39,117 @@ module.exports = {
 
 	createOrUpdate: (req, res) => {
 		let data = req.param('data');
-		StudyTimeStatistics.find({ user: data.userID, date: data.date, deletedAt: null }).exec((err, result) =>{
+		StudyTimeStatistics.findOne({ user: data.userID, date: data.date, deletedAt: null }).exec((err, result) =>{
 			if(err){
 				console.log(err);
 				return res.serverError(err);
 			}
-			if(result.length == 0)
+			if(result)
+			{
+				StudyTimeStatistics.update({ id: result.id }, { nceTime: result.nceTime + data.nceTime, recitationTime: result.recitationTime + data.recitationTime }).exec((finalErr, finalResult) => {
+					if(finalErr){
+						console.log(finalErr);
+						return res.serverError(finalErr);
+					}
+					return res.ok();
+				});
+			}
+			else
 			{
 				StudyTimeStatistics.create({ user: data.userID, date: data.date, nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
 					}
-					return res.json(finalResult);
+					return res.ok();
 				});
 			}
-			else
+		});
+	},
+
+	synchronize: (req, res) => {
+		let userID = req.param('userID');
+		let data = req.param('data');
+		let date = [], nceTime = [], recitationTime = [];
+
+		for(let i = 0; i < data.length; i++)
+		{
+			date.push(data[i].date);
+			nceTime.push(data[i].nceTime)
+			recitationTime.push(data[i].recitationTime)
+		}
+
+		StudyTimeStatistics.find({ user: userID, date: date })
+		.sort('date ASC')
+		.exec((err, result) => {
+			if(err)
 			{
-				if(req.param('hasSynchronized') == false)
+				console.log(err);
+				return res.serverError(err);
+			}
+			let createList = [];
+			let updateList = { id: [], nceTime: [], recitationTime: [] };
+
+			let count = 0;
+			for(let i = 0; i < date.length; i++)
+			{
+				let flag = false;
+				for(let j = 0; j < result.length && count < result.length; j++)
 				{
-					data.nceTime = data.nceTime + result[0].nceTime;
-					data.recitationTime = data.recitationTime + result[0].recitationTime;
+					if(date[i] == result[j].date)
+					{
+						updateList.id.push(result[j].id);
+						updateList.nceTime.push(result[j].nceTime + nceTime[i]);
+						updateList.recitationTime.push(result[j].recitationTime + recitationTime[i]);
+						flag = true;
+						count = count + 1;
+						break;
+					}
 				}
-				StudyTimeStatistics.update({ user: data.userID, date: data.date, deletedAt: null }, { nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
+				if(!flag)
+				{
+					createList.push({ user: userID, date: date[i], nceTime: nceTime[i], recitationTime: recitationTime[i] });
+				}
+			}
+			let task = [];
+			for(let i = 0; i < updateList.id.length; i++)
+			{
+				task.push((callback) => {
+					StudyTimeStatistics.update({ id: updateList.id[i] }, { nceTime: updateList.nceTime[i], recitationTime: updateList.recitationTime[i] }).exec((err, result) => {
+						if(err){
+							callback(err, null);
+						}
+						callback(null, result);
+					});
+				});
+			}
+			if(createList.length > 0)
+			{
+				task.push((callback) => {
+					StudyTimeStatistics.create(createList).exec((err, result) => {
+						if(err){
+							callback(err, null);
+						}
+						callback(null, result);
+					});
+				});
+			}
+			async.series(task, (err, ok) => {
+				if(err){
+					console.log(err);
+					return res.serverError(err);
+				}
+				StudyTimeStatistics.find({ user: userID })
+				.sort('date ASC')
+				.exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
 					}
 					return res.json(finalResult);
 				});
-			}
+			});
 		});
-	},
-	//untest
-	synchronize: (req, res) => {
-		let temp = req.param('data');
-		let userID = req.param('userID');
-		let data = [];
-
-		for(let key in temp)
-		{
-			data.push({
-				date: key,
-				nceTime: temp[key].nceTime,
-				recitationTime: temp[key].recitationTime,
-				user: userID
-			})
-		}
-
-		StudyTimeStatistics.findOrCreate(data).exec((err, result) => {
-			if(err)
-			{
-				console.log(err);
-				return res.serverError(err);
-			}
-			return res.json(result);
-		})
 	}
-	
 };
 

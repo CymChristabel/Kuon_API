@@ -23,6 +23,9 @@ module.exports = {
     	},
     	progress: {
     		type: 'integer'
+    	},
+    	time: {
+    		type: 'integer'
     	}
 	}
 };

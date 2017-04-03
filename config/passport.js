@@ -6,8 +6,8 @@ var ExtractJwt = require('passport-jwt').ExtractJwt;
 var EXPIRES_IN_MINUTES = 60 * 24 * 365;
 var SECRET = process.env.tokenSecret || "4ukI0uIVnB3iI1yxj646fVXSE3ZVk4doZgz6fTbNg7jO41EAtl20J5F7Trtwe7OM";
 var ALGORITHM = "HS256";
-var ISSUER = "nozus.com";
-var AUDIENCE = "nozus.com";
+var ISSUER = "New Concept App API";
+var AUDIENCE = "New Concept App";
 
 var bcrypt = require('bcrypt');
 
