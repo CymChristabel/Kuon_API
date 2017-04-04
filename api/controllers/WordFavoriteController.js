@@ -13,7 +13,7 @@ module.exports = {
 			}
 			for(let i = 0; i < result.length; i++)
 			{
-				result[i].word = _.pick(result[i].word, 'name');
+				result[i].word = _.pick(result[i].word, ['id', 'name']);
 				result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
 			}
 			
