@@ -1,28 +1,84 @@
-/**
- * NCEStatisticsController
- *
- * @description :: Server-side logic for managing Ncestatistics
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
+var moment = require('moment');
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = {
 	find(req, res){
-		var userID = req.param('user');
-
-		NCE_statistics.find({ user: userID }, { where: { deletedAt: null }, sort: 'lessionID ASC' } ).populate('lession').populate('book').exec(function (err, result){
-				if(err){
-					return res.json(err);
-				}
-				for(let i = 0; i < result.length; i++)
+		if(req.param('lessionID'))
+		{
+			NCE_statistics.find({ user: req.param('userID'), lession: req.param('lessionID'), deletedAt: null })
+				.sort('date ASC')
+				.exec((err, result) => {
+					if(err){
+						return res.serverError(err);
+					}
+					for(let i = 0; i < result.length; i++)
+					{
+						result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
+					}
+					return res.json(result);
+				});
+		}
+		else
+		{
+			NCE_statistics.find({ user: req.param('userID'), deletedAt: null })
+				.sort('book ASC')
+				.exec((err, result) => {
+					if(err){
+						return res.serverError(err);
+					}
+					for(let i = 0; i < result.length; i++)
+					{
+						result[i] = _.omit(result[i], ['createdAt', 'updatedAt', 'deletedAt']);
+					}
+					return res.json(result);
+				});
+		}
+	},
+	create(req, res){
+		NCE_statistics.create({ user: req.param('userID'), date: req.param('date'), correct: req.param('correct'), incorrect: req.param('incorrect'), book: req.param('bookID'), lession: req.param('lessionID') }).exec((finalErr, finalResult) => {
+			if(finalErr)
+			{
+				console.log(finalErr);
+				return res.serverError(finalErr);
+			}
+			return res.json(_.omit(finalResult, ['createdAt', 'updatedAt', 'deletedAt']));
+		});
+	},
+	synchronize: (req, res) => {
+		let userID = req.param('userID');
+		let data = _.sortBy(req.param('data'), ['lessionID', 'createdAt']);
+		for(let i = 0; i < data.length; i++)
+		{
+			let temp = {
+				user: userID,
+				date: data[i].date,
+				correct: data[i].correct,
+				incorrect: data[i].incorrect,
+				book: data[i].bookID,
+				lession: data[i].lessionID
+			}
+		}
+		NCE_statistics.create(temp).exec((err, ok) => {
+			if(err)
+			{
+				console.log(err);
+				return res.serverError(err);
+			}
+			NCE_statistics.find({ user: userID })
+			.sort('book ASC')
+			.exec((finalErr, finalResult) => {
+				if(finalErr)
 				{
-					result[i].lession = _.pick(result[i].lession, [ 'id', 'title' ]);
-					result[i].book = _.pick(result[i].book, [ 'id', 'title' ]);
+					console.log(finalErr);
+					return res.serverError(finalErr);
 				}
-
-				return res.ok(result);
-			});
+				console.log(finalResult);
+				return res.json(_.omit(finalResult, ['createdAt', 'updatedAt', 'deletedAt']));
+			})
+		});
 	}
 };
+
+
 

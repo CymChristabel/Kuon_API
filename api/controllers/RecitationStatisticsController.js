@@ -81,7 +81,7 @@ module.exports = {
 			correct.push(data[i].correct)
 			incorrect.push(data[i].incorrect)
 		}
-		RecitationStatistics.find({ user: userID, date: date, vocabulary: vocabularyID })
+		RecitationStatistics.find({ user: userID, date: date, vocabulary: vocabularyID, deletedAt: null })
 		.sort('date ASC')
 		.exec((err, result) => {
 			if(err)

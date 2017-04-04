@@ -38,15 +38,18 @@ module.exports = {
 	},
 
 	createOrUpdate: (req, res) => {
-		let data = req.param('data');
-		StudyTimeStatistics.findOne({ user: data.userID, date: data.date, deletedAt: null }).exec((err, result) =>{
+		let userID = req.param('userID');
+		let nceTime = req.param('nceTime');
+		let recitationTime = req.param('recitationTime');
+		let date = req.param('date');
+		StudyTimeStatistics.findOne({ user: userID, date: date, deletedAt: null }).exec((err, result) =>{
 			if(err){
 				console.log(err);
 				return res.serverError(err);
 			}
 			if(result)
 			{
-				StudyTimeStatistics.update({ id: result.id }, { nceTime: result.nceTime + data.nceTime, recitationTime: result.recitationTime + data.recitationTime }).exec((finalErr, finalResult) => {
+				StudyTimeStatistics.update({ id: result.id }, { nceTime: result.nceTime + nceTime, recitationTime: result.recitationTime + recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
@@ -56,7 +59,7 @@ module.exports = {
 			}
 			else
 			{
-				StudyTimeStatistics.create({ user: data.userID, date: data.date, nceTime: data.nceTime, recitationTime: data.recitationTime }).exec((finalErr, finalResult) => {
+				StudyTimeStatistics.create({ user: userID, date: date, nceTime: nceTime, recitationTime: recitationTime }).exec((finalErr, finalResult) => {
 					if(finalErr){
 						console.log(finalErr);
 						return res.serverError(finalErr);
@@ -79,7 +82,7 @@ module.exports = {
 			recitationTime.push(data[i].recitationTime)
 		}
 
-		StudyTimeStatistics.find({ user: userID, date: date })
+		StudyTimeStatistics.find({ user: userID, date: date, deletedAt: null })
 		.sort('date ASC')
 		.exec((err, result) => {
 			if(err)

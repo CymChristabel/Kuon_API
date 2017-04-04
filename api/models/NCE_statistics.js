@@ -31,9 +31,6 @@ module.exports = {
     		type: 'string',
     		required: true
     	},
-    	time: {
-    		type: 'integer'
-    	},
     	correct: {
     		type: 'integer'
     	},
