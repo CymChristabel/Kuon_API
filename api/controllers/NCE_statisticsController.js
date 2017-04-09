@@ -65,7 +65,7 @@ module.exports = {
 				console.log(err);
 				return res.serverError(err);
 			}
-			NCE_statistics.find({ user: userID })
+			NCE_statistics.find({ user: userID, deletedAt: null })
 			.sort('book ASC')
 			.exec((finalErr, finalResult) => {
 				if(finalErr)

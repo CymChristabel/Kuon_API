@@ -14,18 +14,38 @@ module.exports = {
 		{
 			RecitationVocabulary.find().exec(function (err, word) {
 				if (err) {
-					return res.json({err: err});
+					res.serverError(err);
 				}
 				return res.json(word);
 			});
 		}
 		else
 		{
-			RecitationVocabulary.find({ id: id }).populate('word').exec(function (err, word) {
+			RecitationVocabulary.findOne({ id: id }).populate('word').exec(function (err, word) {
 				if (err) {
-					return res.json({err: err});
+					return res.serverError(err);
 				}
-				return res.json(word);
+				RecitationProgress.findOne({ user: req.param('userID'), vocabulary: id, deletedAt: null }).exec((finalErr, finalResult) => {
+					if(finalErr)
+					{
+						return res.serverError(finalErr);
+					}
+					if(finalResult == undefined)
+					{
+						RecitationProgress.create({ user: req.param('userID'), vocabulary: id, time: 0 , progress: 0 }).exec((createErr, createResult) => {
+							if(finalErr)
+							{
+								console.log(finalErr);
+								return res.serverError(finalErr);
+							}
+							return res.json({ word: word, progress: createResult });
+						});
+					}
+					else
+					{
+						return res.json({ word: word, progress: finalResult });
+					}
+				});
 			});
 		}
 	}
