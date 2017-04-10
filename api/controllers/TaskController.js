@@ -27,17 +27,29 @@ module.exports = {
 			recitationTask: (finalCallback) => {
 				RecitationTask.find({ user: userID, finished: false, deletedAt: null })
 				.populate('vocabulary')
-				.exec((err, finalResult) => {
+				.exec((err, result) => {
 					if(err)
 					{
 						finalCallback(err, null);
 					}
-					for(let i = 0; i < finalResult.length; i++)
+					let resetID = [];
+					for(let i = 0; i < result.length; i++)
 					{
-						finalResult[i].vocabulary = _.pick(finalResult[i].vocabulary, ['id', 'title']);
-						finalResult[i] = _.omit(finalResult[i], ['createdAt', 'deletedAt']);
+						result[i].vocabulary = _.pick(result[i].vocabulary, ['id', 'title']);
+						result[i] = _.omit(result[i], ['createdAt', 'deletedAt']);
+						if(moment(result[i].updatedAt).format('YYYY-MM-DD') != moment().format('YYYY-MM-DD'))
+						{
+							resetID.push(result[i].id);
+							result[i].current = 0;
+						}
 					}
-					finalCallback(null, finalResult);
+					RecitationTask.update({ id: resetID }, { current: 0 }).exec((finalErr, ok) => {
+						if(finalErr)
+						{
+							finalCallback(err, null);
+						}
+					});
+					finalCallback(null, result);
 				});
 			}
 		}, (finalErr, finalResult) => {

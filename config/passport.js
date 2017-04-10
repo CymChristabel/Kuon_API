@@ -28,7 +28,7 @@ var JWT_STRATEGY_CONFIG = {
 };
 
 function _onLocalStrategyAuth(email, password, next) {
-  User.findOne({email: email})
+  User.findOne({ email: email })
     .exec(function (error, user) {
       if (error) return next(error, false, {});
  
@@ -36,7 +36,6 @@ function _onLocalStrategyAuth(email, password, next) {
         code: 'E_USER_NOT_FOUND',
         message: email + ' is not found'
       });
- 
       if (!CipherService.comparePassword(password, user))
         return next(null, false, {
           code: 'E_WRONG_PASSWORD',

@@ -52,6 +52,29 @@ module.exports = {
     .catch(res.negotiate);
   },
 
+  resetPassword: (req, res) => {
+    User.findOne({ email: req.param('email') }).exec((err, user) => {
+      if(err || !user)
+      {
+        return res.serverError('User not found');
+      }
+      if(CipherService.comparePassword(req.param('oldPassword'), user))
+      {
+        User.update({ id: user.id }, { password: req.param('newPassword') }).exec((finalErr, ok) => {
+          if(finalErr)
+          {
+            return res.serverError(finalErr);
+          }
+          return res.json({ err: false, message: 'change succeed'});
+        });
+      }
+      else
+      {
+        return res.json({ err: true, message: 'old password incorrect' });
+      }
+    });
+  },
+
   testAuth(req, res){
     return res.json({ code: 'Accepted'});
   }
