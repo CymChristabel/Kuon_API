@@ -30,6 +30,9 @@ module.exports.policies = {
     '*': true,
     'testAuth': 'isAuthenticated'
   },
+  'TestController': {
+    '*': true
+  }
   
   // 'NCE_statisticsController': 'isAuthenticated',
   // 'StudyTimeStatisticsController': 'isAuthenticated'
