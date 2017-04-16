@@ -10,7 +10,10 @@ module.exports = {
 		return res.json({status: 'successed'});
 	},
 	getFile: (req, res) => {
-		return res.sendfile('views/test.mp3');
+		return res.sendfile('views/template.png');
+	},
+	getAudio: (req, res) => {
+		return res.sendfile(req.param('audio'));
 	},
 	uploadFile: (req, res) => {
 		req.file('avatar').upload(function (err, uploadedFiles){

@@ -26,6 +26,9 @@ module.exports = {
 			type: 'integer',
 			required: true,
 			model: 'nce_book'
+		},
+		audio: {
+			type: 'string'
 		}
 	}
 };

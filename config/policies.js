@@ -30,7 +30,7 @@ module.exports.policies = {
     '*': true,
     'testAuth': 'isAuthenticated'
   },
-  'TestController': {
+  'FileController': {
     '*': true
   }
   
