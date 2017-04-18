@@ -25,12 +25,8 @@ module.exports = {
   	},
   	avatar: {
   		type: 'string',
-      defaultsTo: ''
+      defaultsTo: null
   	},
-  	studyNotification: {
-  		type: 'string'
-  	},
-
     toJSON: function() {
       var obj = this.toObject();
       delete obj.password;

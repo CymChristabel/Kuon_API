@@ -73,7 +73,6 @@ module.exports = {
 					console.log(finalErr);
 					return res.serverError(finalErr);
 				}
-				console.log(finalResult);
 				return res.json(_.omit(finalResult, ['createdAt', 'updatedAt', 'deletedAt']));
 			})
 		});
