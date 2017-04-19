@@ -173,6 +173,18 @@ module.exports = {
 		});
 	},
 
+	rejectRequest: (req, res) => {
+		let responseUserID = req.param('userID');
+		let requestUserID = req.param('requestUserID');
+		FriendRequest.update({ requestUser: requestUserID, responseUser: responseUserID }, { deletedAt: moment().format('YYYY-MM-DD HH:mm:ss') }).exec((err, ok) => {
+			if(err)
+			{
+				return res.serverError(err);
+			}
+			return res.ok();
+		});
+	},
+
 	postRequest: (req, res) => {
 		let requestUserID = req.param('userID');
 		let responseUserID = req.param('responseUserID');
@@ -283,7 +295,7 @@ module.exports = {
 			});
 	},
 
-	sayGoodBye: (req, res) => {
+	sayGoodbye: (req, res) => {
 		let requestUserID = req.param('userID');
 		let friendID = req.param('friendID');
 		async.series([
