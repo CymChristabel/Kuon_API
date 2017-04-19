@@ -323,6 +323,153 @@ module.exports = {
 				}
 				return res.ok();
 			});
-	}
-};
+	},
 
+	compareStatistics: (req, res) => {
+		let userID = req.param('userID');
+		let friendID = req.param('friendID');
+
+		async.series({
+			user: (callback) => {
+				async.series({
+					studyTime: (cb) => {
+						StudyTimeStatistics.find({ user: userID, deletedAt: null })
+							.sum(['nceTime', 'recitationTime'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].nceTime == null)
+								{
+									result[0].nceTime = 0;
+								}
+								if(result[0].recitationTime == null)
+								{
+									result[0].recitationTime = 0;
+								}
+								cb(null, result[0]);
+							});
+					},
+					recitation: (cb) => {
+						RecitationStatistics.find({ user: userID, deletedAt: null })
+							.sum(['correct', 'incorrect'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].correct == null)
+								{
+									result[0].correct = 0;
+								}
+								if(result[0].incorrect == null)
+								{
+									result[0].incorrect = 0;
+								}
+								cb(null, result[0]);
+							});
+					},
+					nce: (cb) => {
+						NCE_statistics.find({ user: userID, deletedAt: null })
+							.sum(['correct', 'incorrect'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].correct == null)
+								{
+									result[0].correct = 0;
+								}
+								if(result[0].incorrect == null)
+								{
+									result[0].incorrect = 0;
+								}
+								cb(null, result[0]);
+							});
+					}
+				}, (err, result) => {
+					if(err)
+					{
+						callback(err, null);
+					}
+					callback(null, result);
+				});
+			},
+			friend: (callback) => {
+				async.series({
+					studyTime: (cb) => {
+						StudyTimeStatistics.find({ user: friendID, deletedAt: null })
+							.sum(['nceTime', 'recitationTime'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].nceTime == null)
+								{
+									result[0].nceTime = 0;
+								}
+								if(result[0].recitationTime == null)
+								{
+									result[0].recitationTime = 0;
+								}
+								cb(null, result[0]);
+							});
+					},
+					recitation: (cb) => {
+						RecitationStatistics.find({ user: friendID, deletedAt: null })
+							.sum(['correct', 'incorrect'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].correct == null)
+								{
+									result[0].correct = 0;
+								}
+								if(result[0].incorrect == null)
+								{
+									result[0].incorrect = 0;
+								}
+								cb(null, result[0]);
+							});
+					},
+					nce: (cb) => {
+						NCE_statistics.find({ user: friendID, deletedAt: null })
+							.sum(['correct', 'incorrect'])
+							.exec((err, result) => {
+								if(err)
+								{
+									cb(err, null);
+								}
+								if(result[0].correct == null)
+								{
+									result[0].correct = 0;
+								}
+								if(result[0].incorrect == null)
+								{
+									result[0].incorrect = 0;
+								}
+								cb(null, result[0]);
+							});
+					}
+				}, (err, result) => {
+					if(err)
+					{
+						callback(err, null);
+					}
+					callback(null, result);
+				});
+			}
+		}, (err, result) => {
+			if(err)
+			{
+				return res.serverError(err);
+			}
+			return res.json(result);
+		});
+	},
+};
