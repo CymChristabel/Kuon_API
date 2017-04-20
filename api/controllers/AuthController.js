@@ -4,6 +4,7 @@
  */
 // var MailerService = require('sails-service-mailer');
 var passport = require('passport');
+var moment = require('moment');
 
 function _onPassportAuth(req, res, error, user, info) {
   if (error) return res.serverError(error);
@@ -43,13 +44,94 @@ module.exports = {
       _onPassportAuth.bind(this, req, res))(req, res);
   },
 
-  send: function(req, res){
-    MailerService.mailer.send({
-      to: req.param('to'),
-      text: 'and of course, beer'
-    })
-    .then(res.ok)
-    .catch(res.negotiate);
+  requestForgetPassword: (req, res) => {
+    let email = req.param('email');
+    User.findOne({ email: email, deletedAt: null }).exec((err, result) => {
+      if (err) {
+        return res.serverError(err);
+      }
+      if (result) {
+        ForgetPasswordToken.find({ deletedAt: null }).exec((findErr, findResult) => {
+          if(findErr)
+          {
+            return res.serverError(findErr);
+          }
+          let token = Math.round(Math.random() * 1000000);
+          if(findResult.length > 0)
+          {
+            let flag = true;
+            while(flag)
+            {
+              token = Math.round(Math.random() * 1000000);
+              for(let i = 0; i < findResult.length; i++)
+              {
+                if(findResult[i].token == token)
+                {
+                  break;
+                }
+                if(i == findResult.length - 1)
+                {
+                  flag = false;
+                }
+              }
+            }
+          }
+          ForgetPasswordToken.create({ user: result.id, token: token }).exec((createErr, ok) => {
+            if (createErr) 
+            {
+              return res.serverError(createErr);
+            }
+            MailerService.mailer.send({
+              to: email,
+              text: 'token:' + token
+            })
+            .then(res.json({ ok: true, message: 'email sended'}))
+            .catch(res.negotiate);
+          });
+        });
+      }
+      else {
+        return res.json({ ok: false, message: 'This email does not exist' });
+      }
+    });
+  },
+
+  resolveForgetPassword: (req, res) => {
+    let token = req.param('token');
+    let password = req.param('password');
+    ForgetPasswordToken.findOne({ token: token, deletedAt: null}).exec((err, result) => {
+      if(err)
+      {
+        return res.serverError(err);
+      }
+      if(result)
+      {
+        if(moment().diff(moment(result.createdAt), 'minutes') < 60)
+        {
+          User.update({ id: result.user }, { password: password }).exec((finalErr, ok) => {
+            if(finalErr)
+            {
+              return res.serverError(finalErr);
+            }
+            return res.json({ ok: true });
+          });
+        }
+        else
+        {
+          ForgetPasswordToken.update({ id: result.id }, { deletedAt: moment().format('YYYY-MM-DD HH:mm:ss') }).exec((finalErr, ok) => {
+            if(finalErr)
+            {
+              return res.serverError(finalErr);
+            }
+            return res.json({ ok: false, message: 'token expired' });
+          });
+        }
+      }
+      else
+      {
+        return res.json({ ok: false, message: 'token not found' });
+      }
+    });
   },
 
   resetPassword: (req, res) => {
