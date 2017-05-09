@@ -69,6 +69,15 @@ module.exports = {
 				});
 			}
 		});
+	},
+	resetProgress: (req, res) => {
+		RecitationProgress.update({ user: req.param('userID'), vocabulary: req.param('vocabularyID'), deletedAt: null }, { progress: 0 }).exec((err, ok) => {
+			if(err)
+			{
+				return res.serverError(err);
+			}
+			return res.ok();
+		});
 	}
 };
 

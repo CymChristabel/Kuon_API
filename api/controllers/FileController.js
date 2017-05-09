@@ -12,11 +12,14 @@ module.exports = {
 		return res.sendfile(req.param('audio'));
 	},
 	uploadFile: (req, res) => {
-		req.file('avatar').upload(function (err, uploadedFiles){
-		if (err) return res.serverError(err);
+		console.log(req);
+		req.file('avatar').upload({
+			dirname: '../../assets/uploads'
+		}, function (err, uploadedFiles){
+			if (err) return res.serverError(err);
 			return res.json({
-				message: files.length + ' file(s) uploaded successfully!',
-				files: files
+				message: uploadedFiles.length + ' file(s) uploaded successfully!',
+				files: uploadedFiles
 			});
 		});
 	}

@@ -108,6 +108,12 @@ module.exports = {
       {
         if(moment().diff(moment(result.createdAt), 'minutes') < 60)
         {
+          ForgetPasswordToken.update({ id: result.id }, { deletedAt: moment().format('YYYY-MM-DD HH:mm:ss') }).exec((finalErr, ok) => {
+            if(finalErr)
+            {
+              return res.serverError(finalErr);
+            }
+          });
           User.update({ id: result.user }, { password: password }).exec((finalErr, ok) => {
             if(finalErr)
             {

@@ -32,6 +32,12 @@ module.exports.policies = {
   },
   'FileController': {
     '*': true
+  },
+  'RecitationVocabularyController': {
+    '*': true
+  },
+  'NCE_bookController': {
+    '*': true  
   }
   
   // 'NCE_statisticsController': 'isAuthenticated',

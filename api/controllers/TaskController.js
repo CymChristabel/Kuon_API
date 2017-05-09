@@ -19,7 +19,7 @@ module.exports = {
 					{
 						finalResult[i].book = _.pick(finalResult[i].book, ['id', 'title']);
 						finalResult[i].nextLession = _.pick(finalResult[i].nextLession, ['id', 'title']);
-						finalResult[i] = _.omit(finalResult[i], ['createdAt', 'deletedAt']);
+						finalResult[i] = _.omit(finalResult[i], ['deletedAt']);
 					}
 					finalCallback(null, finalResult);
 				});
@@ -36,7 +36,7 @@ module.exports = {
 					for(let i = 0; i < result.length; i++)
 					{
 						result[i].vocabulary = _.pick(result[i].vocabulary, ['id', 'title']);
-						result[i] = _.omit(result[i], ['createdAt', 'deletedAt']);
+						result[i] = _.omit(result[i], ['deletedAt']);
 						if(moment(result[i].updatedAt).format('YYYY-MM-DD') != moment().format('YYYY-MM-DD'))
 						{
 							resetID.push(result[i].id);
